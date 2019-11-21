@@ -1,0 +1,125 @@
+apiVersion: v1
+kind: List
+items:
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    name: clusterdemo-s2i
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: quay.io/willbenton/simple-model-s2i:blog-201810
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewBuild
+    labels:
+      scrapeModelMetrics: "yes"
+    name: clusterdemo
+  spec:
+    importPolicy: { }
+- apiVersion: build.openshift.io/v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewBuild
+    labels:
+      scrapeModelMetrics: "yes"
+    name: clusterdemo-build
+  spec:
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: clusterdemo:latest
+    postCommit: {}
+    resources:
+      limits:
+        cpu: 500m
+        memory: 3Gi
+      requests:
+        cpu: 50m
+        memory: 256Mi
+    source:
+      type: Git
+      git:
+        ref: master
+        uri: https://github.com/erikerlandson/cluster-demo.git
+      contextDir: source
+    strategy:
+      sourceStrategy:
+        env:
+        - name: S2I_SOURCE_NOTEBOOK
+          value: 33-clusterdemo-train-s2i.ipynb
+        from:
+          kind: ImageStreamTag
+          name: clusterdemo-s2i:latest
+      type: Source
+- apiVersion: apps.openshift.io/v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    labels:
+      app: clusterdemo
+    name: clusterdemo
+  spec:
+    replicas: 1
+    selector:
+      app: clusterdemo
+      deploymentconfig: clusterdemo
+    strategy:
+      resources: {}
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        labels:
+          app: clusterdemo
+          deploymentconfig: clusterdemo
+      spec:
+        containers:
+        - image: image-registry.openshift-image-registry.svc:5000/myproject/clusterdemo:latest
+          name: clusterdemo
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources: {}
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - clusterdemo
+        from:
+          kind: ImageStreamTag
+          name: clusterdemo:latest
+      type: ImageChange
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    labels:
+      app: clusterdemo
+    name: clusterdemo
+  spec:
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: clusterdemo
+      deploymentconfig: clusterdemo
