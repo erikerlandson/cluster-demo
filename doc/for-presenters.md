@@ -1,34 +1,14 @@
 # For Presenters
 
-Add notes here stating what the presenters of the workshop need to know.
+Target Audience:
+People interested in one or more of the following:
+1. Unsupervised Clustering
+1. Machine Learning workflows on OpenShift
+1. Using S2I to generate microservices from models trained on a jupyter notebook
 
-What are the goals of the workshop?
-
-Who is the target audience?
-
-What are the key take-aways?
-
-
-## Background and workshop flow 
-
-Give any background reading that may aid the presenters of the workshop here. 
-
-Talk through the stages of the workshop - is it all slides then all hands on, or are the slides and interactive sections interspersed?
-
-Outline the structure of the workshop. Explain what each of the items (eg Jupyter notebooks) in the `source` folder illustrates. 
-
-Provide any further reading links which could be passed on to enthusiastic workshop attendees. 
-
-## Modularity and extending the workshop
-
-Give notes on how the workshop could be altered to last for different lengths of time.
-
-What content could be extended? 
-
-What content could be reduced, or removed, if necessary? 
-
-## Speakers Notes
-
-Include speakers notes, unless they are already present in the slides. 
-
-If you've given this workshop before and any recordings exist, please link to these here. 
+Key Takeaways:
+1. Jupyter is a good platform for exploratory data science
+1. Python supports a large ecosystem of popular data science tools, such as Scikit-Learn and k-means clustering
+1. It is easy to import python libraries into a notebook on the fly
+1. OpenShift source to image features allow code artifacts like scripts or even Jupyter notebooks to be automatically rendered into running micro-services
+k
